@@ -1,17 +1,15 @@
 ﻿@model List<YourProjectName.Models.BankAccount>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Bank Account Dashboard</h2>
+<div class="container mt-4">
+    <h2>Bank Account Dashboard</h2>
 
-    <div class="text-center mb-4">
-        <a asp-action="Create" class="btn btn-primary me-2">Create Account</a>
-        <a asp-action="Transfer" class="btn btn-info text-white">Transfer</a>
-    </div>
+    <a asp-action="Create" class="btn btn-primary mb-3">Create New Account</a>
+    <a asp-action="Transfer" class="btn btn-info mb-3 text-white">Transfer Money</a>
 
-    <table class="table table-bordered text-center">
-        <thead class="table-dark">
+    <table class="table table-bordered">
+        <thead>
             <tr>
-                <th>Account</th>
+                <th>Account Number</th>
                 <th>Owner</th>
                 <th>Balance</th>
                 <th>Actions</th>
@@ -23,10 +21,11 @@
                 <tr>
                     <td>@acc.AccountNumber</td>
                     <td>@acc.Owner</td>
-                    <td>@acc.Balance</td>
+                    <td>@acc.Balance.ToString("C")</td>
                     <td>
-                        <a asp-action="Deposit" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-success btn-sm">Deposit</a>
-                        <a asp-action="Withdraw" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-warning btn-sm">Withdraw</a>
+                        <a asp-action="Deposit" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-success btn-sm me-1">Deposit</a>
+                        <a asp-action="Withdraw" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-warning btn-sm me-1">Withdraw</a>
+                        <a asp-action="Transactions" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-secondary btn-sm">History</a>
                     </td>
                 </tr>
             }
