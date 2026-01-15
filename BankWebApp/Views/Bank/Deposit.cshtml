@@ -1,0 +1,20 @@
+﻿<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            Deposit to Account @Model.AccountNumber (@Model.Owner)
+        </div>
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                <input type="hidden" name="accountNumber" value="@Model.AccountNumber" />
+                <div class="col-md-6">
+                    <label class="form-label">Amount</label>
+                    <input type="number" name="amount" step="0.01" class="form-control" required />
+                </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-success">Deposit</button>
+                    <a href="/Bank/Index" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
