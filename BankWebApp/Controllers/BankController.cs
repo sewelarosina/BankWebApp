@@ -1,7 +1,8 @@
-﻿using BankWebApp.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using BankWebApp.Models;
 using System.Collections.Generic;
 using System.Linq;
+
 
 namespace BankWebApp.Controllers
 {
