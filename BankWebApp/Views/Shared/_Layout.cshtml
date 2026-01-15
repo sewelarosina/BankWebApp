@@ -1,30 +1,20 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] - Bank Web App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bank App</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
     <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1">Bank Web App</span>
-            <button class="navbar-toggler" type="button">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
+        <span class="navbar-brand ms-3">Bank App</span>
     </nav>
 
-    <main role="main" class="pb-3">
+    <div>
         @RenderBody()
-    </main>
+    </div>
 
     <footer class="bg-dark text-white text-center py-3 mt-5">
-        © 2026 Bank Web App. All rights reserved.
+        © 2026 Bank App
     </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

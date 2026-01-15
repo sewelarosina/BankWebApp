@@ -1,17 +1,11 @@
-﻿@{
-    ViewData["Title"] = "Withdraw Money";
-}
+﻿@model YourProjectName.Models.AmountViewModel
 
-<h2>Withdraw Money</h2>
+<div class="container mt-5">
+    <h3>Withdraw</h3>
 
-<form method="post">
-    <input type="hidden" name="accountNumber" value="@ViewBag.AccountNumber" />
-
-    <div class="mb-3">
-        <label class="form-label">Amount</label>
-        <input type="number" name="amount" class="form-control" required />
-    </div>
-
-    <button type="submit" class="btn btn-warning">Withdraw</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>
+    <form asp-action="Withdraw" method="post">
+        <input type="hidden" asp-for="AccountNumber" />
+        <input asp-for="Amount" type="number" class="form-control mb-2" />
+        <button class="btn btn-warning">Withdraw</button>
+    </form>
+</div>

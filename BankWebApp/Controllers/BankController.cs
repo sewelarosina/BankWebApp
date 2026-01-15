@@ -38,15 +38,55 @@ namespace YourProjectName.Controllers
             var from = accounts.FirstOrDefault(a => a.AccountNumber == model.FromAccount);
             var to = accounts.FirstOrDefault(a => a.AccountNumber == model.ToAccount);
 
-            if (from == null || to == null || from.Balance < model.Amount)
+            if (from == null || to == null || model.Amount <= 0 || from.Balance < model.Amount)
             {
-                ModelState.AddModelError("", "Invalid transfer details.");
+                ModelState.AddModelError("", "Invalid transfer.");
                 return View(model);
             }
 
             from.Balance -= model.Amount;
             to.Balance += model.Amount;
 
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Deposit(int accountNumber)
+        {
+            return View(new AmountViewModel { AccountNumber = accountNumber });
+        }
+
+        [HttpPost]
+        public IActionResult Deposit(AmountViewModel model)
+        {
+            var account = accounts.FirstOrDefault(a => a.AccountNumber == model.AccountNumber);
+
+            if (account == null || model.Amount <= 0)
+            {
+                ModelState.AddModelError("", "Invalid deposit.");
+                return View(model);
+            }
+
+            account.Balance += model.Amount;
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Withdraw(int accountNumber)
+        {
+            return View(new AmountViewModel { AccountNumber = accountNumber });
+        }
+
+        [HttpPost]
+        public IActionResult Withdraw(AmountViewModel model)
+        {
+            var account = accounts.FirstOrDefault(a => a.AccountNumber == model.AccountNumber);
+
+            if (account == null || model.Amount <= 0 || account.Balance < model.Amount)
+            {
+                ModelState.AddModelError("", "Invalid withdrawal.");
+                return View(model);
+            }
+
+            account.Balance -= model.Amount;
             return RedirectToAction("Index");
         }
     }

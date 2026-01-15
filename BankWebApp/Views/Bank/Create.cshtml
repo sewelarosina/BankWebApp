@@ -1,20 +1,11 @@
-﻿@model BankAccount
+﻿@model YourProjectName.Models.BankAccount
 
 <div class="container mt-5">
-    <h3>Create New Account</h3>
+    <h3>Create Account</h3>
 
-    <form asp-action="Create" method="post" class="mt-4">
-        <div class="mb-3">
-            <label class="form-label">Owner Name</label>
-            <input asp-for="Owner" class="form-control" required />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Initial Balance</label>
-            <input asp-for="Balance" type="number" class="form-control" required />
-        </div>
-
+    <form asp-action="Create" method="post">
+        <input asp-for="Owner" class="form-control mb-2" placeholder="Owner Name" />
+        <input asp-for="Balance" type="number" class="form-control mb-2" placeholder="Initial Balance" />
         <button class="btn btn-primary">Create</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </form>
 </div>

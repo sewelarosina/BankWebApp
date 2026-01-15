@@ -1,18 +1,17 @@
-﻿@model List<BankAccount>
+﻿@model List<YourProjectName.Models.BankAccount>
 
 <div class="container mt-5">
-
     <h2 class="text-center mb-4">Bank Account Dashboard</h2>
 
     <div class="text-center mb-4">
-        <a class="btn btn-primary me-2" asp-action="Create">Create New Account</a>
-        <a class="btn btn-info text-white" asp-action="Transfer">Transfer Money</a>
+        <a asp-action="Create" class="btn btn-primary me-2">Create Account</a>
+        <a asp-action="Transfer" class="btn btn-info text-white">Transfer</a>
     </div>
 
     <table class="table table-bordered text-center">
         <thead class="table-dark">
             <tr>
-                <th>Account Number</th>
+                <th>Account</th>
                 <th>Owner</th>
                 <th>Balance</th>
                 <th>Actions</th>
@@ -26,11 +25,11 @@
                     <td>@acc.Owner</td>
                     <td>@acc.Balance</td>
                     <td>
-                        <span class="text-muted">—</span>
+                        <a asp-action="Deposit" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-success btn-sm">Deposit</a>
+                        <a asp-action="Withdraw" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-warning btn-sm">Withdraw</a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-
 </div>
