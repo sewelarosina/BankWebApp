@@ -4,9 +4,25 @@
     <h3>Transfer Money</h3>
 
     <form asp-action="Transfer" method="post">
-        <input asp-for="FromAccount" class="form-control mb-2" placeholder="From Account" />
-        <input asp-for="ToAccount" class="form-control mb-2" placeholder="To Account" />
-        <input asp-for="Amount" type="number" class="form-control mb-2" placeholder="Amount" />
-        <button class="btn btn-info text-white">Transfer</button>
+
+        <div class="mb-3">
+            <label class="form-label">From Account</label>
+            <input asp-for="FromAccount" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">To Account</label>
+            <input asp-for="ToAccount" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Amount</label>
+            <input asp-for="Amount" type="number" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-info text-white">Transfer</button>
+
+        <!-- THIS IS THE KEY PART -->
+        <div asp-validation-summary="All" class="text-danger mt-3"></div>
     </form>
 </div>
