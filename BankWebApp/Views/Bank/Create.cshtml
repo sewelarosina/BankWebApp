@@ -1,14 +1,20 @@
-﻿<div class="container mt-5">
-    <h2 class="mb-3">Create New Account</h2>
+﻿@model BankAccount
 
-    <form method="post" class="row g-3">
-        <div class="col-md-6">
+<div class="container mt-5">
+    <h3>Create New Account</h3>
+
+    <form asp-action="Create" method="post" class="mt-4">
+        <div class="mb-3">
             <label class="form-label">Owner Name</label>
-            <input type="text" name="owner" class="form-control" required />
+            <input asp-for="Owner" class="form-control" required />
         </div>
-        <div class="col-12 mt-3">
-            <button type="submit" class="btn btn-primary">Create Account</button>
-            <a href="/Bank/Index" class="btn btn-secondary">Back</a>
+
+        <div class="mb-3">
+            <label class="form-label">Initial Balance</label>
+            <input asp-for="Balance" type="number" class="form-control" required />
         </div>
+
+        <button class="btn btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </form>
 </div>

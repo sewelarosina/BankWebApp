@@ -1,8 +1,17 @@
-﻿<h2>Withdraw from Account @Model.AccountNumber (@Model.Owner)</h2>
+﻿@{
+    ViewData["Title"] = "Withdraw Money";
+}
+
+<h2>Withdraw Money</h2>
 
 <form method="post">
-    <input type="hidden" name="accountNumber" value="@Model.AccountNumber" />
-    <label>Amount:</label>
-    <input type="number" name="amount" step="0.01" required />
-    <button type="submit">Withdraw</button>
+    <input type="hidden" name="accountNumber" value="@ViewBag.AccountNumber" />
+
+    <div class="mb-3">
+        <label class="form-label">Amount</label>
+        <input type="number" name="amount" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-warning">Withdraw</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
