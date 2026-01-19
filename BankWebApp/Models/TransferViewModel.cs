@@ -1,9 +1,10 @@
-﻿namespace YourProjectName.Models
+﻿namespace BankWebApp.Models
 {
     public class TransferViewModel
     {
-        public int FromAccount { get; set; }
-        public int ToAccount { get; set; }
+        public int FromAccountId { get; set; }
+        public int ToAccountId { get; set; }
         public decimal Amount { get; set; }
+        public List<BankAccount> Accounts { get; set; } = new();
     }
 }

@@ -1,34 +1,61 @@
-﻿@model List<YourProjectName.Models.BankAccount>
+﻿@model List<BankWebApp.Models.BankAccount>
 
-<div class="container mt-4">
-    <h2>Bank Account Dashboard</h2>
+<h1 class="text-center mb-4">Bank Dashboard</h1>
 
-    <a asp-action="Create" class="btn btn-primary mb-3">Create New Account</a>
-    <a asp-action="Transfer" class="btn btn-info mb-3 text-white">Transfer Money</a>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Account Number</th>
-                <th>Owner</th>
-                <th>Balance</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var acc in Model)
+<!-- BUTTONS -->
+<div class="mb-3 text-center">
+    <a asp-action="Create" class="btn btn-primary me-2">Create Account</a>
+    <a asp-action="Transfer" class="btn btn-info text-white me-2">Transfer Money</a>
+    <a asp-action="Transactions" class="btn btn-secondary">View Transactions</a>
+</div>
+
+<!-- ACCOUNTS TABLE -->
+<table class="table table-bordered text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Account #</th>
+            <th>Owner</th>
+            <th>Balance</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model == null || Model.Count == 0)
+        {
+            <tr><td colspan="4">No accounts yet.</td></tr>
+        }
+        else
+        {
+            foreach (var acc in Model)
             {
                 <tr>
+                     
                     <td>@acc.AccountNumber</td>
                     <td>@acc.Owner</td>
-                    <td>@acc.Balance.ToString("C")</td>
-                    <td>
-                        <a asp-action="Deposit" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-success btn-sm me-1">Deposit</a>
-                        <a asp-action="Withdraw" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-warning btn-sm me-1">Withdraw</a>
-                        <a asp-action="Transactions" asp-route-accountNumber="@acc.AccountNumber" class="btn btn-secondary btn-sm">History</a>
+                    <td>$@acc.Balance</td>
+                    <td class="d-flex justify-content-center gap-1">
+                        <a asp-action="Deposit" asp-route-id="@acc.AccountNumber" class="btn btn-success btn-sm">Deposit</a>
+                        <a asp-action="Withdraw" asp-route-id="@acc.AccountNumber" class="btn btn-warning btn-sm">Withdraw</a>
+                        <a asp-action="Edit" asp-route-id="@acc.AccountNumber" class="btn btn-info btn-sm text-white">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@acc.AccountNumber" class="btn btn-danger btn-sm">Delete</a>
                     </td>
                 </tr>
             }
-        </tbody>
-    </table>
-</div>
+        }
+    </tbody>
+</table>

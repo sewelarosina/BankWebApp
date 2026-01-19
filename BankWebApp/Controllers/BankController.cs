@@ -1,173 +1,240 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using BankWebApp.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using YourProjectName.Models;
 
-namespace YourProjectName.Controllers
+namespace BankWebApp.Controllers
 {
     public class BankController : Controller
     {
         private static List<BankAccount> accounts = new();
         private static List<Transaction> transactions = new();
-        private static int transactionIdCounter = 1;
+        private static int nextAccountNumber = 1001;
+        private static int nextTransactionId = 1;
 
+        // ---------------------- DASHBOARD ----------------------
         public IActionResult Index()
         {
             return View(accounts);
         }
 
-        // Create Account GET
-        public IActionResult Create()
-        {
-            return View();
-        }
+        // ---------------------- CREATE ACCOUNT ----------------------
+        public IActionResult Create() => View();
 
-        // Create Account POST
         [HttpPost]
-        public IActionResult Create(BankAccount model)
+        public IActionResult Create(string owner, decimal initialBalance)
         {
-            if (ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(owner))
             {
-                accounts.Add(model);
-                return RedirectToAction("Index");
-            }
-            return View(model);
-        }
-
-        // Transfer GET
-        public IActionResult Transfer()
-        {
-            return View();
-        }
-
-        // Transfer POST
-        [HttpPost]
-        public IActionResult Transfer(TransferViewModel model)
-        {
-            var from = accounts.FirstOrDefault(a => a.AccountNumber == model.FromAccount);
-            var to = accounts.FirstOrDefault(a => a.AccountNumber == model.ToAccount);
-
-            if (from == null || to == null || model.Amount <= 0 || from.Balance < model.Amount)
-            {
-                ModelState.AddModelError("", "Invalid transfer.");
-                return View(model);
+                TempData["Error"] = "Owner name cannot be empty.";
+                return RedirectToAction("Create");
             }
 
-            from.Balance -= model.Amount;
-            to.Balance += model.Amount;
-
-            transactions.Add(new Transaction
+            accounts.Add(new BankAccount
             {
-                Id = transactionIdCounter++,
-                AccountNumber = from.AccountNumber,
-                Type = TransactionType.Transfer,
-                Amount = model.Amount,
-                Date = DateTime.Now,
-                RelatedAccountNumber = to.AccountNumber
+                AccountNumber = nextAccountNumber++,
+                Owner = owner,
+                Balance = initialBalance
             });
 
-            transactions.Add(new Transaction
-            {
-                Id = transactionIdCounter++,
-                AccountNumber = to.AccountNumber,
-                Type = TransactionType.Transfer,
-                Amount = model.Amount,
-                Date = DateTime.Now,
-                RelatedAccountNumber = from.AccountNumber
-            });
-
+            TempData["Success"] = $"Account created successfully for {owner}!";
             return RedirectToAction("Index");
         }
 
-        // Deposit GET
-        public IActionResult Deposit(int accountNumber)
+        // ---------------------- DEPOSIT ----------------------
+        public IActionResult Deposit(int id)
         {
-            var account = accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
-            if (account == null)
-                return NotFound();
-
-            return View(new AmountViewModel { AccountNumber = accountNumber });
+            var acc = accounts.FirstOrDefault(a => a.AccountNumber == id);
+            if (acc == null) { TempData["Error"] = "Account not found."; return RedirectToAction("Index"); }
+            return View(acc);
         }
 
-        // Deposit POST
         [HttpPost]
-        public IActionResult Deposit(AmountViewModel model)
+        public IActionResult Deposit(int id, decimal amount)
         {
-            var account = accounts.FirstOrDefault(a => a.AccountNumber == model.AccountNumber);
+            var acc = accounts.FirstOrDefault(a => a.AccountNumber == id);
+            if (acc == null) { TempData["Error"] = "Account not found."; return RedirectToAction("Index"); }
+            if (amount <= 0) { TempData["Error"] = "Deposit must be positive."; return RedirectToAction("Deposit", new { id }); }
 
-            if (account == null || model.Amount <= 0)
-            {
-                ModelState.AddModelError("", "Invalid deposit.");
-                return View(model);
-            }
-
-            account.Balance += model.Amount;
+            acc.Balance += amount;
 
             transactions.Add(new Transaction
             {
-                Id = transactionIdCounter++,
-                AccountNumber = account.AccountNumber,
-                Type = TransactionType.Deposit,
-                Amount = model.Amount,
-                Date = DateTime.Now
+                TransactionId = nextTransactionId++,
+                AccountNumber = id,
+                Type = "Deposit",
+                Amount = amount,
+                Description = $"Deposited ${amount}",
+                Date = System.DateTime.Now
             });
 
+            TempData["Success"] = $"Successfully deposited ${amount} to account {id}.";
             return RedirectToAction("Index");
         }
 
-        // Withdraw GET
-        public IActionResult Withdraw(int accountNumber)
+        // ---------------------- WITHDRAW ----------------------
+        public IActionResult Withdraw(int id)
         {
-            var account = accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
-            if (account == null)
-                return NotFound();
-
-            return View(new AmountViewModel { AccountNumber = accountNumber });
+            var acc = accounts.FirstOrDefault(a => a.AccountNumber == id);
+            if (acc == null) { TempData["Error"] = "Account not found."; return RedirectToAction("Index"); }
+            return View(acc);
         }
 
-        // Withdraw POST
         [HttpPost]
-        public IActionResult Withdraw(AmountViewModel model)
+        public IActionResult Withdraw(int id, decimal amount)
         {
-            var account = accounts.FirstOrDefault(a => a.AccountNumber == model.AccountNumber);
+            var acc = accounts.FirstOrDefault(a => a.AccountNumber == id);
+            if (acc == null) { TempData["Error"] = "Account not found."; return RedirectToAction("Index"); }
+            if (amount <= 0) { TempData["Error"] = "Withdrawal must be positive."; return RedirectToAction("Withdraw", new { id }); }
+            if (amount > acc.Balance) { TempData["Error"] = "Insufficient balance!"; return RedirectToAction("Withdraw", new { id }); }
 
-            if (account == null || model.Amount <= 0 || account.Balance < model.Amount)
-            {
-                ModelState.AddModelError("", "Invalid withdrawal.");
-                return View(model);
-            }
-
-            account.Balance -= model.Amount;
+            acc.Balance -= amount;
 
             transactions.Add(new Transaction
             {
-                Id = transactionIdCounter++,
-                AccountNumber = account.AccountNumber,
-                Type = TransactionType.Withdraw,
-                Amount = model.Amount,
-                Date = DateTime.Now
+                TransactionId = nextTransactionId++,
+                AccountNumber = id,
+                Type = "Withdraw",
+                Amount = amount,
+                Description = $"Withdrew ${amount}",
+                Date = System.DateTime.Now
             });
 
+            TempData["Success"] = $"Successfully withdrew ${amount} from account {id}.";
             return RedirectToAction("Index");
         }
 
-        // Transaction History
-        public IActionResult Transactions(int accountNumber)
+        // ---------------------- EDIT ----------------------
+        public IActionResult Edit(int id)
         {
-            var account = accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
-            if (account == null)
+            var acc = accounts.FirstOrDefault(a => a.AccountNumber == id);
+            if (acc == null) { TempData["Error"] = "Account not found."; return RedirectToAction("Index"); }
+            return View(acc);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, string owner, decimal balance)
+        {
+            var acc = accounts.FirstOrDefault(a => a.AccountNumber == id);
+            if (acc == null) { TempData["Error"] = "Account not found."; return RedirectToAction("Index"); }
+            if (string.IsNullOrWhiteSpace(owner)) { TempData["Error"] = "Owner cannot be empty."; return RedirectToAction("Edit", new { id }); }
+
+            acc.Owner = owner;
+            acc.Balance = balance;
+
+            TempData["Success"] = $"Account {id} updated successfully!";
+            return RedirectToAction("Index");
+        }
+
+        // ---------------------- DELETE ----------------------
+        public IActionResult Delete(int id)
+        {
+            var acc = accounts.FirstOrDefault(a => a.AccountNumber == id);
+            if (acc == null) { TempData["Error"] = "Account not found."; return RedirectToAction("Index"); }
+            return View(acc);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var acc = accounts.FirstOrDefault(a => a.AccountNumber == id);
+            if (acc != null)
             {
-                return NotFound();
+                accounts.Remove(acc);
+                TempData["Success"] = $"Account {id} deleted successfully!";
+            }
+            else TempData["Error"] = "Account not found.";
+            return RedirectToAction("Index");
+        }
+
+        // ---------------------- TRANSFER ----------------------
+        public IActionResult Transfer() => View();
+
+        [HttpPost]
+        public IActionResult Transfer(int from, int to, decimal amount)
+        {
+            var sender = accounts.FirstOrDefault(a => a.AccountNumber == from);
+            var receiver = accounts.FirstOrDefault(a => a.AccountNumber == to);
+
+            if (amount <= 0)
+            {
+                TempData["Error"] = "Transfer amount must be positive.";
+                return RedirectToAction("Transfer");
             }
 
-            var accountTransactions = transactions
-                .Where(t => t.AccountNumber == accountNumber)
-                .OrderByDescending(t => t.Date)
-                .ToList();
+            // Deduct from sender if exists
+            if (sender != null)
+            {
+                if (sender.Balance < amount)
+                {
+                    TempData["Error"] = "Sender has insufficient balance.";
+                    return RedirectToAction("Transfer");
+                }
 
-            ViewBag.Account = account;
-            return View(accountTransactions);
+                sender.Balance -= amount;
+
+                transactions.Add(new Transaction
+                {
+                    TransactionId = nextTransactionId++,
+                    AccountNumber = from,
+                    Type = "Transfer Out",
+                    Amount = amount,
+                    Description = $"Transferred ${amount} to account {to}",
+                    Date = System.DateTime.Now
+                });
+            }
+            else
+            {
+                // Sender doesn't exist, just log
+                transactions.Add(new Transaction
+                {
+                    TransactionId = nextTransactionId++,
+                    AccountNumber = from,
+                    Type = "Transfer Out",
+                    Amount = amount,
+                    Description = $"Transferred ${amount} to account {to} (nonexistent sender)",
+                    Date = System.DateTime.Now
+                });
+            }
+
+            // Add to receiver if exists
+            if (receiver != null)
+            {
+                receiver.Balance += amount;
+
+                transactions.Add(new Transaction
+                {
+                    TransactionId = nextTransactionId++,
+                    AccountNumber = to,
+                    Type = "Transfer In",
+                    Amount = amount,
+                    Description = $"Received ${amount} from account {from}",
+                    Date = System.DateTime.Now
+                });
+            }
+            else
+            {
+                // Receiver doesn't exist, just log
+                transactions.Add(new Transaction
+                {
+                    TransactionId = nextTransactionId++,
+                    AccountNumber = to,
+                    Type = "Transfer In",
+                    Amount = amount,
+                    Description = $"Received ${amount} from account {from} (nonexistent receiver)",
+                    Date = System.DateTime.Now
+                });
+            }
+
+            TempData["Success"] = $"Successfully transferred ${amount} from {from} to {to}.";
+            return RedirectToAction("Index");
+        }
+
+        // ---------------------- TRANSACTIONS HISTORY ----------------------
+        public IActionResult Transactions()
+        {
+            var sorted = transactions.OrderByDescending(t => t.Date).ToList();
+            return View(sorted);
         }
     }
 }

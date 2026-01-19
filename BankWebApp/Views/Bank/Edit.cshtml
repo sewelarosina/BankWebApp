@@ -1,0 +1,17 @@
+﻿@model BankWebApp.Models.BankAccount
+
+<h2>Edit Account – @Model.AccountNumber</h2>
+
+<form method="post">
+    <input type="hidden" name="id" value="@Model.AccountNumber" />
+    <div class="mb-3">
+        <label>Owner Name</label>
+        <input name="owner" value="@Model.Owner" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label>Balance</label>
+        <input type="number" name="balance" value="@Model.Balance" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

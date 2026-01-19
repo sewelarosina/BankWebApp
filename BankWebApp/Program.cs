@@ -4,8 +4,11 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-app.UseExceptionHandler("/Home/Error");
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 

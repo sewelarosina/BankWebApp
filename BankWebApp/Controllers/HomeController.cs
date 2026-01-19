@@ -1,16 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using YourProjectName.Models;
 
-namespace YourProjectName.Controllers
+namespace YourProject.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Error()
+        public IActionResult Index()
         {
-            return View(new ErrorViewModel
-            {
-                RequestId = HttpContext.TraceIdentifier
-            });
+            return View();
         }
     }
 }
